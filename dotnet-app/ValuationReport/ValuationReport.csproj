@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="2018 MAY Valuation Anglia Maltings %28Holdings%29 Limited ANG001.xls" />
+    <None Remove="Aspose.Total.lic" />
+    <None Remove="May_2018_MVAL BD5 M_DAB_ANG001.xls" />
+    <None Remove="testdata\assestdataset.xls" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Aspose.Total.lic">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="testdata\assestdataset.xls">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Aspose.PDF" Version="18.10.0" />
+    <PackageReference Include="Aspose.Cells" Version="18.10.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="RG.System.Data.DataExtensions" Version="1.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="CsvHelper" Version="9.0.0" />
+  </ItemGroup>
+</Project>

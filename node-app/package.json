@@ -1,0 +1,46 @@
+{
+  "name": "pdfrec-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "engine.io": "^3.4.0",
+    "express": "^4.17.1",
+    "http-proxy-middleware": "^0.20.0",
+    "mongodb": "3.2.2",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
+    "react-scripts": "3.2.0",
+    "shelljs": "^0.8.3"
+  },
+  "scripts": {
+    "build": "react-scripts build",
+    "client": "react-scripts start",
+    "server": "npm run build && nodemon ./server.js",
+    "dev": "set NODE_ENV=development && concurrently \"npm run server\" \"npm run client\""
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "axios": "^0.19.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "concurrently": "^5.0.0",
+    "cors": "^2.8.5",    
+    "dotenv": "^8.2.0",
+    "nodemon": "^1.19.4",
+    "ws": "^7.2.0"
+  }
+}

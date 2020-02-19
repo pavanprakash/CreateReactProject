@@ -1,0 +1,119 @@
+@startuml
+skinparam sequenceMessageAlign center
+skinparam roundcorner 10
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+title: <size:32>Sequence Diagram for PDF Rec Web Application</size>
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
+
+skinparam sequenceMessageAlign center
+== User interaction on Page Load (PDFRec Dashboard)  ==
+group 
+	"Browser" --> "Express JS (server)": request (index.html)
+
+
+	"Browser" <-- "Express JS (server)": response (app.js, css)
+
+
+	"Browser" <-- "Express JS (server)": socket connection established (message recieved on connection)
+
+	group Case 1- when PDF Rec is not running
+		"CheckPowershellRunStatus.ps1" <-- "Express JS (server)": check for monthlyPdfloc.txt
+
+		note right: loc for monthlyPdfloc.txt -> \\\\ruffer.local\\dfs\\Shared\\PDFRec
+		"CheckPowershellRunStatus.ps1" --> "Express JS (server)": returns string- NOT RUNNING
+		"Browser" <-- "Express JS (server)": socket connection response (Updates field on page- MONTHLY RUN STATUS - NOT RUNNING )
+		"CheckPowershellRunStatus.ps1" <-- "Express JS (server)": check for qtrlyPdfloc.txt
+
+		note right: loc for qtrlyPdfloc.txt -> \\\\ruffer.local\\dfs\\Shared\\PDFRec
+		"CheckPowershellRunStatus.ps1" --> "Express JS (server)": returns string- NOT RUNNING
+		"Browser" <-- "Express JS (server)": socket connection response (Updates field on page- QUARTERLY RUN STATUS - NOT RUNNING )
+	end
+
+	group Case 2- when PDF Rec is running
+		"CheckPowershellRunStatus.ps1" <-- "Express JS (server)": check for monthlyPdfloc.txt
+		"CheckPowershellRunStatus.ps1" --> "Express JS (server)": returns string- RUNNING
+		"Browser" <-- "Express JS (server)": socket connection response (Updates field on page- MONTHLY RUN STATUS - RUNNING )
+		"CheckPowershellRunStatus.ps1" <-- "Express JS (server)": check for qtrlyPdfloc.txt
+		"CheckPowershellRunStatus.ps1" --> "Express JS (server)": returns string- RUNNING
+		"Browser" <-- "Express JS (server)": socket connection response (Updates field on page- QUARTERLY RUN STATUS - RUNNING )
+	end
+end 
+== User Interaction on Submission - monthly PDF Rec ==
+group
+	group Case 1- when PDF Rec is not running
+		"Browser" --> "Express JS (server)": User submission
+		"CheckPowershellRunStatus.ps1" <-- "Express JS (server)": check for monthlyPdfloc.txt
+
+		note right: creates monthlyPdfloc.txt file if it doesnt exists
+		"CheckPowershellRunStatus.ps1" --> "Express JS (server)": returns string- NOT RUNNING
+		"Express JS (server)" --> "monthly-pdf-rec.ps1": asynchronous request (performs monthly pdf rec)
+		note right: deletes monthlyPdfloc.txt upon completion
+		"Browser" <-- "Express JS (server)": socket connection response (Updates field on page- MONTHLY RUN STATUS - RUNNING )
+		loop every 5 mins
+			"CheckPowershellRunStatus.ps1" <-- "Express JS (server)": check for monthlyPdfloc.txt
+			"CheckPowershellRunStatus.ps1" --> "Express JS (server)": EXISTS, returns string- RUNNING
+			note left: RESPONSE 1 OR
+
+			"CheckPowershellRunStatus.ps1" --> "Express JS (server)": NOT EXISTS, returns string- NOT RUNNING
+			note left: RESPONSE 2
+			
+		end
+		"Express JS (server)" <-- "Express JS (server)" : resolves Promise upon RESPONSE 2
+		"Browser" <-- "Express JS (server)": socket connection response (Updates field on page- MONTHLY RUN STATUS - FINISHED )
+	end
+	group Case 2- when PDF Rec is running
+		"Browser" --> "Express JS (server)": User submission
+		"CheckPowershellRunStatus.ps1" <-- "Express JS (server)": check for monthlyPdfloc.txt
+		"CheckPowershellRunStatus.ps1" --> "Express JS (server)": returns string- RUNNING
+		"Browser" <-- "Express JS (server)": socket connection response (Updates field on page- MONTHLY RUN STATUS - RUNNING )
+	end
+end
+== User Interaction on Submission - quarterly PDF Rec ==
+group
+	group Case 1- when PDF Rec is not running
+		"Browser" --> "Express JS (server)": User submission
+		"CheckPowershellRunStatus.ps1" <-- "Express JS (server)": check for qtrlyPdfloc.txt
+
+		note right: creates qtrlyPdfloc.txt file if it doesnt exists
+		"CheckPowershellRunStatus.ps1" --> "Express JS (server)": returns string- NOT RUNNING
+		"Express JS (server)" --> "quarterly-pdf-rec.ps1": asynchronous request (performs quarterly pdf rec)
+		note right: deletes qtrlyPdfloc.txt upon completion
+		"Browser" <-- "Express JS (server)": socket connection response (Updates field on page- QUARTERLY RUN STATUS - RUNNING )
+		loop every 5 mins
+			"CheckPowershellRunStatus.ps1" <-- "Express JS (server)": check for qtrlyPdfloc.txt
+			"CheckPowershellRunStatus.ps1" --> "Express JS (server)": EXISTS, returns string- RUNNING
+			note left: RESPONSE 1 OR
+
+			"CheckPowershellRunStatus.ps1" --> "Express JS (server)": NOT EXISTS, returns string- NOT RUNNING
+			note left: RESPONSE 2
+			
+		end
+		"Express JS (server)" <-- "Express JS (server)" : resolves Promise upon RESPONSE 2
+		"Browser" <-- "Express JS (server)": socket connection response (Updates field on page- QUARTERLY RUN STATUS - FINISHED )
+	end
+	group Case 2- when PDF Rec is running
+		"Browser" --> "Express JS (server)": User submission
+		"CheckPowershellRunStatus.ps1" <-- "Express JS (server)": check for qtrlyPdfloc.txt
+		"CheckPowershellRunStatus.ps1" --> "Express JS (server)": returns string- RUNNING
+		"Browser" <-- "Express JS (server)": socket connection response (Updates field on page- QUARTERLY RUN STATUS - RUNNING )
+	end
+end
+@enduml
